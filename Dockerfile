@@ -4,7 +4,7 @@ FROM python:3.11-slim
 # Set working directory for the application
 WORKDIR /app
 
-# Install curl (pour HEALTHCHECK) et autres dépendances si besoin
+# Installer curl pour healthcheck
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies first to leverage Docker cache
@@ -21,7 +21,7 @@ USER appuser
 # Expose the application's port
 EXPOSE 5000
 
-# Add a healthcheck (adapte la route /health si nécessaire)
+# Add a healthcheck to verify the service is running
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:5000/health || exit 1
 
