@@ -1,45 +1,48 @@
-Rapport d’incident et post‑mortem
-Informations générales
-Date et heure de l’incident : 29 juillet 2025, 14:30 CET
+# Rapport d’incident et post‑mortem
 
-Services impactés : API TODO
+## Informations générales
 
-Gravité : modérée
+- **Date et heure de l’incident** : <!-- ex : 29 juillet 2025, 10:15 CET -->
+- **Services impactés** : <!-- ex : API TODO -->
+- **Gravité** : <!-- faible / modérée / forte -->
 
-Résumé
-Lors d’un test de résilience, un appel volontaire à l’endpoint /error a provoqué une erreur serveur 500 (division par zéro). Cette erreur a été détectée via une augmentation du taux d’erreur HTTP dans Prometheus et Grafana, impactant temporairement la disponibilité de l’API pour certains utilisateurs.
+## Résumé
 
-Timeline
-Heure (CET)	Événement
-14:30	Déclenchement volontaire de l’erreur 500 via /error
-14:31	Augmentation du taux d’erreur visible dans Grafana
-14:35	Analyse des logs et vérification du code source
-14:40	Confirmation du bug de division par zéro volontaire dans app.py
-14:50	Décision de supprimer ou désactiver l’endpoint /error
-15:00	Redéploiement de l’application corrigée
-15:05	Retour à un taux d’erreur normal sur Prometheus
+Décrivez en quelques phrases ce qui s’est passé, comment l’incident a été
+identifié et quel a été l’impact pour les utilisateurs.
 
-Détection et diagnostic
-La panne a été détectée grâce à la surveillance continue des métriques exposées par l’application. Le dashboard Grafana montrait une hausse significative des erreurs HTTP 500. La consultation des logs d’application a confirmé une exception non gérée. L’analyse du code a permis d’identifier la source exacte : une division par zéro volontaire dans la route /error.
+## Timeline
 
-Cause racine
-L’incident est lié à un endpoint /error qui provoque intentionnellement une exception pour simuler une panne. Aucun mécanisme de gestion d’erreur ou d’alerte n’était mis en place pour anticiper ou limiter l’impact de cette erreur sur le service global.
+| Heure (CET) | Événement |
+|-------------|-----------|
+| 10:15 | Déclenchement de l’erreur 500 lors de l’appel à `/error` |
+| ... | ... |
 
-Actions correctives et rétablissement
-L’endpoint /error a été temporairement désactivé pour éviter d’autres incidents.
+## Détection et diagnostic
 
-Le code a été modifié pour ajouter une gestion d’erreur robuste sur cette route.
+Expliquez comment la panne a été détectée (alertes Prometheus, logs,
+consultation du dashboard Grafana) et quelles métriques ont aidé à
+comprendre le problème.
 
-L’application a été redéployée via le pipeline CI/CD.
+## Cause racine
 
-Les métriques ont été surveillées pour confirmer le retour à la normale.
+Précisez quelle modification ou quel bug a provoqué l’incident.  Dans ce TP,
+il s’agit de la division par zéro volontaire dans `app.py`.  Détaillez
+également les facteurs contributifs (ex. : absence de tests pour ce
+comportement, manque de gestion d’erreurs, etc.).
 
-Leçons apprises et actions de prévention
-Il est important de séparer clairement les endpoints de test/simulation des endpoints de production.
+## Actions correctives et rétablissement
 
-Mettre en place des alertes automatiques sur l’augmentation des erreurs HTTP.
+Décrivez les étapes entreprises pour restaurer le service (rollback,
+correction du code, redéploiement…).  Indiquez les validations effectuées
+après la correction.
 
-Ajouter des tests unitaires et d’intégration pour valider les comportements attendus.
+## Leçons apprises et actions de prévention
 
-Envisager la mise en place d’une gestion d’erreurs centralisée pour améliorer la résilience.
+- Qu’avez‑vous appris de cet incident ?
+- Quelles améliorations mettre en œuvre pour éviter la récidive ?
+- Y a‑t‑il des processus ou des outils à adapter ?
 
+Ce modèle s’inspire des bonnes pratiques SRE en matière de post‑mortem : il
+se concentre sur la compréhension et l’amélioration continue plutôt que sur la
+recherche de responsabilités individuelles【286532960693871†L46-L60】.
