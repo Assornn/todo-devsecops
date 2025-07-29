@@ -4,6 +4,9 @@ FROM python:3.11-slim
 # Set working directory for the application
 WORKDIR /app
 
+# Install curl (pour HEALTHCHECK) et autres dépendances si besoin
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 # Install Python dependencies first to leverage Docker cache
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
